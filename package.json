@@ -1,0 +1,11 @@
+{
+  "name": "lwc-event-stream",
+  "version": "1.0.0",
+  "description": "Compile and runtime types for integrating Nextdoc Stream LWC components. ",
+  "main": "dist/stream3EventStreamSchemas.json",
+  "types": "dist/stream3EventStreamTypes.d.ts",
+  "scripts": {
+  },
+  "author": "Nextdoc Pty Ltd",
+  "license": "Apache-2.0"
+}
