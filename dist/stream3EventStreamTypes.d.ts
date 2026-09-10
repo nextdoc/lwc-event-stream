@@ -1,5 +1,5 @@
 // Auto-generated from stream3EventStreamSchemas.ts — do not edit.
-// Generated: 2026-03-08
+// Generated: 2026-09-10
 
 type EventStreamType = "action.started" | "action.succeeded" | "action.failed" | "send.started" | "send.sent" | "send.failed";
 
@@ -69,7 +69,7 @@ type EventStreamOutbound = ({
         correlationId?: string | undefined;
     };
     /** Salesforce record ID that this event belongs to. */
-    recordId: string;
+    recordId?: string | undefined;
     /** Name of the deployed action that failed. */
     actionName: string;
     /** Short summary of the failure. */
@@ -123,7 +123,7 @@ type EventStreamOutbound = ({
         correlationId?: string | undefined;
     };
     /** Salesforce record ID that this event belongs to. */
-    recordId: string;
+    recordId?: string | undefined;
     /** Name of the deployed action that failed. */
     actionName: string;
     /** Short summary of the failure. */
@@ -194,7 +194,7 @@ type EventStreamOutbound = ({
         correlationId?: string | undefined;
     };
     /** Salesforce record ID that this event belongs to. */
-    recordId: string;
+    recordId?: string | undefined;
     /** Name of the deployed action that failed. */
     actionName: string;
     /** Short summary of the failure. */

@@ -1,9 +1,10 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "https:\/\/json-schema.org\/draft\/2020-12\/schema",
   "title": "EventStream Schema",
-  "description": "Nextdoc EventStream contract v1. Defines outbound events (machine → customer) and inbound events (customer → machine).",
+  "description": "Nextdoc EventStream contract v1. Defines outbound events (machine \u2192 customer) and inbound events (customer \u2192 machine).",
   "$defs": {
     "EventStreamType": {
+      "description": "Specific event types customers can subscribe to. Source of truth for topic validation and the type discriminator on outbound events.",
       "type": "string",
       "enum": [
         "action.started",
@@ -12,27 +13,27 @@
         "send.started",
         "send.sent",
         "send.failed"
-      ],
-      "description": "Specific event types customers can subscribe to. Source of truth for topic validation and the type discriminator on outbound events."
+      ]
     },
     "EventStreamOutbound": {
-      "description": "Outbound event: machine → customer via streamevent CustomEvent detail.",
+      "description": "Outbound event: machine \u2192 customer via streamevent CustomEvent detail.",
       "anyOf": [
         {
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -43,23 +44,22 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "actionName": {
-              "type": "string",
-              "description": "Name of the deployed action that started."
+              "description": "Name of the deployed action that started.",
+              "type": "string"
             },
             "type": {
+              "description": "A deployed action has been initiated. The actionName identifies which action.",
               "type": "string",
               "enum": [
                 "action.started"
-              ],
-              "description": "A deployed action has been initiated. The actionName identifies which action."
+              ]
             }
           },
           "required": [
@@ -74,17 +74,18 @@
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -95,55 +96,55 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "message": {
               "description": "Confirmation message from the completed action.",
               "type": "string"
             },
             "type": {
+              "description": "A deployed action completed successfully. The actionName identifies which action.",
               "type": "string",
               "enum": [
                 "action.succeeded"
-              ],
-              "description": "A deployed action completed successfully. The actionName identifies which action."
+              ]
             },
             "actionName": {
-              "type": "string",
-              "description": "Name of the deployed action that succeeded."
+              "description": "Name of the deployed action that succeeded.",
+              "type": "string"
             },
             "artifacts": {
               "description": "Records saved by the action, typically related to the base recordId (e.g. attachments, linked records).",
               "type": "array",
               "items": {
+                "description": "A record created, updated, or referenced by a completed action. Carried in the artifacts array of action.succeeded events.",
                 "type": "object",
                 "properties": {
                   "recordId": {
-                    "type": "string",
-                    "description": "Salesforce record ID of the affected record (e.g. ContentDocumentLink 06A...)."
+                    "description": "Salesforce record ID of the affected record (e.g. ContentDocumentLink 06A...).",
+                    "type": "string"
                   },
                   "recordType": {
-                    "type": "string",
-                    "description": "SObject type of the created record (e.g. ContentDocumentLink)."
+                    "description": "SObject type of the created record (e.g. ContentDocumentLink).",
+                    "type": "string"
                   },
                   "label": {
-                    "type": "string",
-                    "description": "Customer-defined constant for programmatic dispatch (e.g. primary-attachment, audit-log)."
+                    "description": "Customer-defined constant for programmatic dispatch (e.g. primary-attachment, audit-log).",
+                    "type": "string"
                   },
                   "operation": {
+                    "description": "What the action did to this record.",
                     "type": "string",
                     "enum": [
                       "CREATED",
                       "UPDATED",
                       "DELETED",
                       "REFERENCED"
-                    ],
-                    "description": "What the action did to this record."
+                    ]
                   },
                   "sourceContentDocumentId": {
                     "description": "The parent ContentDocument (068...) that this record links to. Use to correlate with documents known to the LWC.",
@@ -160,8 +161,7 @@
                   "label",
                   "operation"
                 ],
-                "additionalProperties": false,
-                "description": "A record created, updated, or referenced by a completed action. Carried in the artifacts array of action.succeeded events."
+                "additionalProperties": false
               }
             }
           },
@@ -177,17 +177,18 @@
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -198,20 +199,19 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "actionName": {
-              "type": "string",
-              "description": "Name of the deployed action that failed."
+              "description": "Name of the deployed action that failed.",
+              "type": "string"
             },
             "errorMessage": {
-              "type": "string",
-              "description": "Short summary of the failure."
+              "description": "Short summary of the failure.",
+              "type": "string"
             },
             "errorDescription": {
               "description": "Additional detail on the failure, e.g. how to resolve.",
@@ -222,16 +222,15 @@
               "type": "string"
             },
             "type": {
+              "description": "A deployed action failed. The actionName identifies which action.",
               "type": "string",
               "enum": [
                 "action.failed"
-              ],
-              "description": "A deployed action failed. The actionName identifies which action."
+              ]
             }
           },
           "required": [
             "meta",
-            "recordId",
             "actionName",
             "errorMessage",
             "type"
@@ -242,17 +241,18 @@
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -263,23 +263,22 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "actionName": {
-              "type": "string",
-              "description": "Name of the deployed action that started."
+              "description": "Name of the deployed action that started.",
+              "type": "string"
             },
             "type": {
+              "description": "E-signature send has been initiated.",
               "type": "string",
               "enum": [
                 "send.started"
-              ],
-              "description": "E-signature send has been initiated."
+              ]
             }
           },
           "required": [
@@ -294,17 +293,18 @@
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -315,23 +315,22 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "message": {
               "description": "Confirmation message from the completed action.",
               "type": "string"
             },
             "type": {
+              "description": "E-signature send completed successfully.",
               "type": "string",
               "enum": [
                 "send.sent"
-              ],
-              "description": "E-signature send completed successfully."
+              ]
             }
           },
           "required": [
@@ -345,17 +344,18 @@
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -366,20 +366,19 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "actionName": {
-              "type": "string",
-              "description": "Name of the deployed action that failed."
+              "description": "Name of the deployed action that failed.",
+              "type": "string"
             },
             "errorMessage": {
-              "type": "string",
-              "description": "Short summary of the failure."
+              "description": "Short summary of the failure.",
+              "type": "string"
             },
             "errorDescription": {
               "description": "Additional detail on the failure, e.g. how to resolve.",
@@ -390,16 +389,15 @@
               "type": "string"
             },
             "type": {
+              "description": "E-signature send failed.",
               "type": "string",
               "enum": [
                 "send.failed"
-              ],
-              "description": "E-signature send failed."
+              ]
             }
           },
           "required": [
             "meta",
-            "recordId",
             "actionName",
             "errorMessage",
             "type"
@@ -410,17 +408,18 @@
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -431,21 +430,20 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "actionName": {
-              "type": "string",
-              "description": "Name of the deployed action that started."
+              "description": "Name of the deployed action that started.",
+              "type": "string"
             },
             "type": {
+              "description": "A custom action has been initiated. Type follows pattern: custom.{name}.started.",
               "type": "string",
-              "pattern": "^custom\\.[a-z][a-z0-9-]*[a-z0-9]\\.started$",
-              "description": "A custom action has been initiated. Type follows pattern: custom.{name}.started."
+              "pattern": "^custom\\.[a-z][a-z0-9-]*[a-z0-9]\\.started$"
             }
           },
           "required": [
@@ -460,17 +458,18 @@
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -481,53 +480,53 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "message": {
               "description": "Confirmation message from the completed action.",
               "type": "string"
             },
             "type": {
+              "description": "A custom action completed successfully. Type follows pattern: custom.{name}.succeeded.",
               "type": "string",
-              "pattern": "^custom\\.[a-z][a-z0-9-]*[a-z0-9]\\.succeeded$",
-              "description": "A custom action completed successfully. Type follows pattern: custom.{name}.succeeded."
+              "pattern": "^custom\\.[a-z][a-z0-9-]*[a-z0-9]\\.succeeded$"
             },
             "actionName": {
-              "type": "string",
-              "description": "Name of the custom action that succeeded."
+              "description": "Name of the custom action that succeeded.",
+              "type": "string"
             },
             "artifacts": {
               "description": "Records saved by the custom action.",
               "type": "array",
               "items": {
+                "description": "A record created, updated, or referenced by a completed action. Carried in the artifacts array of action.succeeded events.",
                 "type": "object",
                 "properties": {
                   "recordId": {
-                    "type": "string",
-                    "description": "Salesforce record ID of the affected record (e.g. ContentDocumentLink 06A...)."
+                    "description": "Salesforce record ID of the affected record (e.g. ContentDocumentLink 06A...).",
+                    "type": "string"
                   },
                   "recordType": {
-                    "type": "string",
-                    "description": "SObject type of the created record (e.g. ContentDocumentLink)."
+                    "description": "SObject type of the created record (e.g. ContentDocumentLink).",
+                    "type": "string"
                   },
                   "label": {
-                    "type": "string",
-                    "description": "Customer-defined constant for programmatic dispatch (e.g. primary-attachment, audit-log)."
+                    "description": "Customer-defined constant for programmatic dispatch (e.g. primary-attachment, audit-log).",
+                    "type": "string"
                   },
                   "operation": {
+                    "description": "What the action did to this record.",
                     "type": "string",
                     "enum": [
                       "CREATED",
                       "UPDATED",
                       "DELETED",
                       "REFERENCED"
-                    ],
-                    "description": "What the action did to this record."
+                    ]
                   },
                   "sourceContentDocumentId": {
                     "description": "The parent ContentDocument (068...) that this record links to. Use to correlate with documents known to the LWC.",
@@ -544,8 +543,7 @@
                   "label",
                   "operation"
                 ],
-                "additionalProperties": false,
-                "description": "A record created, updated, or referenced by a completed action. Carried in the artifacts array of action.succeeded events."
+                "additionalProperties": false
               }
             }
           },
@@ -561,17 +559,18 @@
           "type": "object",
           "properties": {
             "meta": {
+              "description": "Shared metadata present on every outbound event.",
               "type": "object",
               "properties": {
                 "contractVersion": {
-                  "type": "number",
+                  "description": "Schema version. Bumped on breaking changes to event shapes.",
                   "const": 1,
-                  "description": "Schema version. Bumped on breaking changes to event shapes."
+                  "type": "number"
                 },
                 "producer": {
-                  "type": "string",
+                  "description": "Always nextdoc for outbound events. Identifies the event source.",
                   "const": "nextdoc",
-                  "description": "Always nextdoc for outbound events. Identifies the event source."
+                  "type": "string"
                 },
                 "correlationId": {
                   "description": "When present, correlates this event to an originating action request. Matches the requestId from the action acknowledgment flow.",
@@ -582,20 +581,19 @@
                 "contractVersion",
                 "producer"
               ],
-              "additionalProperties": false,
-              "description": "Shared metadata present on every outbound event."
+              "additionalProperties": false
             },
             "recordId": {
-              "type": "string",
-              "description": "Salesforce record ID that this event belongs to."
+              "description": "Salesforce record ID that this event belongs to.",
+              "type": "string"
             },
             "actionName": {
-              "type": "string",
-              "description": "Name of the deployed action that failed."
+              "description": "Name of the deployed action that failed.",
+              "type": "string"
             },
             "errorMessage": {
-              "type": "string",
-              "description": "Short summary of the failure."
+              "description": "Short summary of the failure.",
+              "type": "string"
             },
             "errorDescription": {
               "description": "Additional detail on the failure, e.g. how to resolve.",
@@ -606,14 +604,13 @@
               "type": "string"
             },
             "type": {
+              "description": "A custom action failed. Type follows pattern: custom.{name}.failed.",
               "type": "string",
-              "pattern": "^custom\\.[a-z][a-z0-9-]*[a-z0-9]\\.failed$",
-              "description": "A custom action failed. Type follows pattern: custom.{name}.failed."
+              "pattern": "^custom\\.[a-z][a-z0-9-]*[a-z0-9]\\.failed$"
             }
           },
           "required": [
             "meta",
-            "recordId",
             "actionName",
             "errorMessage",
             "type"
@@ -623,18 +620,18 @@
       ]
     },
     "EventStreamInbound": {
+      "description": "Inbound event: customer \u2192 machine via the publishEvent @api method. Initially scoped to action invocations only.",
       "type": "object",
       "properties": {
         "actionName": {
-          "type": "string",
-          "description": "Name of the deployed action to invoke. Must match the action name configured in the server-side stream deployment."
+          "description": "Name of the deployed action to invoke. Must match the action name configured in the server-side stream deployment.",
+          "type": "string"
         }
       },
       "required": [
         "actionName"
       ],
-      "additionalProperties": false,
-      "description": "Inbound event: customer → machine via the publishEvent @api method. Initially scoped to action invocations only."
+      "additionalProperties": false
     }
   }
 }
